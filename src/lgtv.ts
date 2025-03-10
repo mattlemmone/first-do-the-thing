@@ -4,6 +4,7 @@
 
 import logger from './utils/logger';
 import lgtv from 'lgtv2';
+import { promisify } from 'util';
 
 export interface LGTVConnectionConfig {
   ip: string;
@@ -20,38 +21,39 @@ export interface LGTVConnection {
 /**
  * Connect to the LG TV
  * @param config TV configuration
- * @returns Promise that resolves with the connection when connected
+ * @returns The TV connection when connected
  */
-export function connect(config: LGTVConnectionConfig): Promise<LGTVConnection> {
-  return new Promise((resolve, reject) => {
-    const { ip, port = 3001, key } = config;
+export async function connect(config: LGTVConnectionConfig): Promise<LGTVConnection> {
+  const { ip, port = 3001, key } = config;
 
-    if (!ip) {
-      return reject(new Error('TV IP address is required'));
-    }
+  if (!ip) {
+    throw new Error('TV IP address is required');
+  }
 
-    logger.info(`Connecting to LG TV at ${ip}:${port}`);
+  logger.info(`Connecting to LG TV at ${ip}:${port}`);
 
-    // Create connection with the client key and WebSocket options
-    const connection = lgtv({
-      url: `wss://${ip}:${port}`,
-      timeout: 5000,
-      reconnect: 0,
-      clientKey: key,
-      // Don't save the key to a file, we're using environment variables
-      saveKey: (newKey: string) => {
-        logger.info('Received new client key from TV (hidden for security)');
-        // We don't need to save it since we already have it in .env
-      },
-      // Add WebSocket configuration to bypass security checks
-      wsconfig: {
-        rejectUnauthorized: false, // This is equivalent to --no-check
-        tlsOptions: {
-          rejectUnauthorized: false
-        }
+  // Create connection with the client key and WebSocket options
+  const connection = lgtv({
+    url: `wss://${ip}:${port}`,
+    timeout: 5000,
+    reconnect: 0,
+    clientKey: key,
+    // Don't save the key to a file, we're using environment variables
+    saveKey: (newKey: string) => {
+      logger.info('Received new client key from TV (hidden for security)');
+      // We don't need to save it since we already have it in .env
+    },
+    // Add WebSocket configuration to bypass security checks
+    wsconfig: {
+      rejectUnauthorized: false, // This is equivalent to --no-check
+      tlsOptions: {
+        rejectUnauthorized: false
       }
-    });
+    }
+  });
 
+  // Create a promise that will resolve when connected or reject on error/timeout
+  return await new Promise<LGTVConnection>((resolve, reject) => {
     // Handle connection events
     connection.on('error', (err: Error) => {
       logger.error(`LG TV connection error: ${err.message}`);
@@ -95,20 +97,20 @@ export function connect(config: LGTVConnectionConfig): Promise<LGTVConnection> {
 /**
  * Turn off the TV
  * @param connection The TV connection
- * @returns Promise that resolves when the TV is turned off
  */
-export function turnOff(connection: any): Promise<void> {
-  return new Promise((resolve, reject) => {
-    if (!connection) {
-      return reject(new Error('Not connected to TV'));
-    }
+export async function turnOff(connection: any): Promise<void> {
+  if (!connection) {
+    throw new Error('Not connected to TV');
+  }
 
-    logger.info('Sending turn off command to TV');
-    
+  logger.info('Sending turn off command to TV');
+  
+  return await new Promise<void>((resolve, reject) => {
     connection.request('ssap://system/turnOff', (err: Error | null) => {
       if (err) {
         logger.error(`Failed to turn off TV: ${err.message}`);
-        return reject(err);
+        reject(err);
+        return;
       }
       
       logger.info('TV turned off successfully');
