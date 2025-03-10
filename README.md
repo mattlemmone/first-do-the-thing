@@ -1,26 +1,52 @@
 # First Do The Thing
 
-A TV control system that disables an LG TV when tasks aren't completed. This project uses the lgtv2 Node.js library to send commands to an LG TV and integrates with Things 3 to check for incomplete tasks.
+A productivity enforcement system that automatically turns off your LG TV when you have incomplete tasks in Things 3. Perfect for those who need a little extra motivation to complete their to-do list before relaxing with TV time.
 
-## Features
+## How It Works
 
-- Turn off LG TV via API
-- Things 3 integration to check for tasks with specific tags
-- Automatic scheduling of task checks
-- Real-time TV status monitoring (independent from task checking)
-- Extensible command dispatch system for future integrations
-- REST API for triggering commands
-- Web admin interface for monitoring and control
+1. The system periodically checks Things 3 for tasks with a specific tag (default: "do the thing")
+2. If any tagged tasks exist, and your LG TV is on, it will automatically turn off your TV
+
+## Prerequisites
+
+- Node.js (v14 or higher)
+- npm (v6 or higher)
+- An LG WebOS TV with network connectivity
+- Things 3 app (for task integration)
+- macOS (required for Things 3 integration)
 
 ## Installation
 
 1. Clone the repository
+
+   ```
+   git clone https://github.com/yourusername/first-do-the-thing.git
+   cd first-do-the-thing
+   ```
+
 2. Install dependencies:
+
    ```
    npm install
    ```
-3. Copy `.env.example` to `.env` and update with your TV's IP address, key, and Things 3 configuration
-4. Build the project:
+
+3. Copy `.env.example` to `.env` and update with your configuration:
+
+   ```
+   cp .env.example .env
+   ```
+
+4. Obtain your LG TV key:
+
+   ```
+   node scripts/get-tv-key.js
+   ```
+
+   Follow the on-screen instructions to authorize the application on your TV.
+
+5. Update your `.env` file with the obtained TV key.
+
+6. Build the project:
    ```
    npm run build
    ```
@@ -38,6 +64,10 @@ For development with auto-reload:
 ```
 npm run dev
 ```
+
+### Utility Scripts
+
+- `scripts/get-tv-key.js` - Get the client key for your LG TV
 
 ## Configuration
 
@@ -63,15 +93,13 @@ The application includes a web-based admin interface that allows you to:
 - Turn off the TV directly (when it's on)
 - Monitor system logs in real-time
 
-The admin interface automatically refreshes every 30 seconds to show the latest information.
+The admin interface automatically refreshes every 30 seconds to show the latest information, with TV status updating more frequently (every 2-3 seconds).
 
 To access the admin interface, open your browser and navigate to:
 
 ```
 http://localhost:3000
 ```
-
-(Replace 3000 with your configured port if different)
 
 ## API Endpoints
 
@@ -80,7 +108,4 @@ http://localhost:3000
 - `GET /api/logs` - Get system logs
 - `GET /api/tasks` - Get outstanding tasks with the configured tag
 - `POST /api/tv/turn-off` - Directly turn off the TV
-
-## License
-
-ISC
+- `GET /api/tv/status` - Get the current TV connection status

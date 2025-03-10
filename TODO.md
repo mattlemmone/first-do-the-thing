@@ -14,16 +14,13 @@
 
 ### 2. Core Architecture
 
-- [x] Design and implement Command interface/abstract class
-- [x] Create CommandDispatcher module
 - [x] Implement configuration loader for device settings
 - [x] Set up logging system
 
 ### 3. LG TV Control Module
 
-- [x] Create LGTVCommand class implementing Command interface
-- [x] Implement connection handling to LG TV
-- [x] Add turnOff command
+- [x] Create LG TV connection handling
+- [x] Implement turnOff command
 - [x] Implement error handling and retries
 - [x] Add disconnect/cleanup functionality
 
@@ -36,42 +33,26 @@
 - [x] Create basic response formatting
 - [x] Add status endpoint to check system state
 
-### 5. Testing
-
-- [x] Write unit tests for CommandDispatcher
-- [x] Create unit tests for Things3Command
-- [x] Create unit tests for Scheduler
-- [x] Create unit tests for API endpoints
-- [x] Test error handling scenarios
-- [x] Create mocks for LG TV responses
-
-### 6. Documentation
+### 5. Documentation
 
 - [x] Document API endpoints
 - [x] Create setup instructions
 - [x] Document configuration options
 
-## Phase 2: Extensibility
-
-### 1. Plugin Architecture
-
-- [ ] Design plugin system for command modules
-- [ ] Implement dynamic loading of command modules
-- [ ] Create plugin registration mechanism
-
-## Phase 3: Integration & UI
+## Phase 2: Things 3 Integration
 
 ### 1. Task Integration
 
 - [x] Research Things 3 API integration
 - [x] Implement task checking mechanism
 - [x] Create scheduling system for periodic checks
-- [x] Implement Things3 URL scheme integration
 - [x] Implement polling for tasks with specific tag
 - [x] Add TV state checking and control based on task existence
-- [ ] Add support for custom tags and conditions
+- [x] Add support for custom tags and conditions
 
-### 2. UI Dashboard
+## Phase 3: UI Dashboard
+
+### 1. Web Interface
 
 - [x] Design simple web UI for monitoring status
 - [x] Implement configuration management via UI
@@ -102,9 +83,7 @@
 
 ## Real-time TV Status Updates in UI
 
-### Simpler Approach
-
-Instead of implementing WebSockets, we can use a much simpler approach:
+### Implementation
 
 #### Server-Side Implementation
 
@@ -126,18 +105,10 @@ Instead of implementing WebSockets, we can use a much simpler approach:
    - [x] Toggle the "Turn Off TV" button based on status
    - [x] Add a subtle visual indicator when status changes
 
-#### Implementation Details
+## Future Enhancements
 
-##### Files Modified
-
-1. `src/api/server.ts` - Added the new lightweight TV status endpoint
-2. `src/public/js/admin.js` - Added the frequent polling for TV status
-3. `src/public/css/styles.css` - Added animation for status changes
-
-##### Benefits of This Approach
-
-- Much simpler implementation than WebSockets
-- No additional dependencies required
-- Less overhead on the server
-- Still provides reasonably responsive updates
-- Minimal code changes required
+- [ ] Add support for multiple TVs
+- [ ] Create a mobile-friendly UI
+- [ ] Add user authentication for the admin interface
+- [ ] Implement notification system for task reminders
+- [ ] Add support for other task management systems
