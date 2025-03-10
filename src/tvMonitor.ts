@@ -2,9 +2,9 @@
  * TV Monitor - Handles TV status monitoring independently from the scheduler
  */
 
-import { connect, LGTVConnection } from './lgtv';
-import { config } from './config';
-import logger from './utils/logger';
+import { connect, LGTVConnection } from "./lgtv";
+import { config } from "./config";
+import logger from "./utils/logger";
 
 // TV connection state
 let tvConnection: LGTVConnection | null = null;
@@ -18,20 +18,23 @@ let lastTvCheckTime: Date | null = null;
 export async function checkTvStatus(): Promise<boolean> {
   try {
     lastTvCheckTime = new Date();
-    
+
     // If we already have a connection, the TV is on
     if (tvConnection) {
-      logger.debug('TV connection exists - TV is on');
+      logger.debug("TV connection exists - TV is on");
       return true;
     }
-    
+
     // Try to connect to the TV
     tvConnection = await connect(config.tv);
-    logger.info('Successfully connected to TV - TV is on');
+    logger.info("Successfully connected to TV - TV is on");
     return true;
   } catch (error) {
     // If we can't connect, the TV is likely off or unreachable
-    logger.debug('Failed to connect to TV - TV is likely off or unreachable');
+    logger.debug(
+      "Failed to connect to TV - TV is likely off or unreachable:",
+      error
+    );
     tvConnection = null;
     return false;
   }
@@ -47,7 +50,7 @@ export function getTvStatus(): {
 } {
   return {
     tvConnected: tvConnection !== null,
-    lastCheckTime: lastTvCheckTime
+    lastCheckTime: lastTvCheckTime,
   };
 }
 
@@ -57,23 +60,20 @@ export function getTvStatus(): {
  */
 export function startTvMonitor(checkInterval?: number): void {
   if (tvMonitorInterval) {
-    logger.info('TV monitor already running');
+    logger.info("TV monitor already running");
     return;
   }
-  
+
   // Use provided interval or fall back to config value
   const interval = checkInterval || config.tv.statusCheckInterval;
-  
+
   logger.info(`Starting TV monitor with interval: ${interval}ms`);
-  
+
   // Run the check immediately
   checkTvStatus();
-  
+
   // Then set up the interval
-  tvMonitorInterval = setInterval(
-    checkTvStatus,
-    interval
-  );
+  tvMonitorInterval = setInterval(checkTvStatus, interval);
 }
 
 /**
@@ -83,14 +83,14 @@ export function stopTvMonitor(): void {
   if (tvMonitorInterval) {
     clearInterval(tvMonitorInterval);
     tvMonitorInterval = null;
-    logger.info('TV monitor stopped');
+    logger.info("TV monitor stopped");
   }
-  
+
   // Disconnect from TV if connected
   if (tvConnection) {
     tvConnection.disconnect();
     tvConnection = null;
-    logger.info('Disconnected from TV');
+    logger.info("Disconnected from TV");
   }
 }
 
@@ -100,4 +100,4 @@ export function stopTvMonitor(): void {
  */
 export function getTvConnection(): LGTVConnection | null {
   return tvConnection;
-} 
+}
