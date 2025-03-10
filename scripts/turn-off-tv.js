@@ -35,6 +35,7 @@ Client Key: ${tvKey ? "[PROVIDED]" : "[NOT PROVIDED]"}
 
   console.log("🔄 Connecting to TV...");
 
+  console.log(tvIp, tvKey);
   try {
     // Connect to the TV
     const tvConnection = await connect({

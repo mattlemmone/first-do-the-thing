@@ -31,7 +31,7 @@ const config: AppConfig = {
     key: process.env.TV_KEY || '',
   },
   things3: {
-    tag: process.env.THINGS3_TAG || 'tv-blocker',
+    tag: process.env.THINGS3_TAG || 'do the thing',
     checkInterval: parseInt(process.env.THINGS3_CHECK_INTERVAL || '300000', 10), // Default: 5 minutes
   }
 };

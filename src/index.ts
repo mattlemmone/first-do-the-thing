@@ -1,8 +1,7 @@
 import { startServer } from './api/server';
 import { validateConfig } from './config';
+import { startScheduler } from './scheduler';
 import logger from './utils/logger';
-import { CommandDispatcher } from './commands/CommandDispatcher';
-import { Scheduler } from './utils/scheduler';
 
 // Create logs directory if it doesn't exist
 import fs from 'fs';
@@ -22,13 +21,7 @@ if (!validateConfig()) {
 // Start the server and scheduler
 try {
   startServer();
-  
-  // Initialize command dispatcher and scheduler
-  const commandDispatcher = new CommandDispatcher();
-  const scheduler = new Scheduler(commandDispatcher);
-  
-  // Start the scheduler
-  scheduler.start();
+  startScheduler();
   
   logger.info('Application started successfully');
 } catch (error) {

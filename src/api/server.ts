@@ -1,7 +1,7 @@
 import express from 'express';
-import routes from './routes';
 import logger from '../utils/logger';
 import { config } from '../config';
+import { checkTasksAndControlTv, getStatus } from '../scheduler';
 
 const app = express();
 
@@ -15,8 +15,40 @@ app.use((req, res, next) => {
   next();
 });
 
-// API routes
-app.use('/api', routes);
+// API Routes
+app.post('/api/check-tasks', async (req, res) => {
+  try {
+    logger.info('Manual task check triggered via API');
+    await checkTasksAndControlTv();
+    res.json({ success: true, message: 'Task check completed' });
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    logger.error(`Error in manual task check: ${errorMessage}`);
+    res.status(500).json({
+      success: false,
+      message: 'Error checking tasks',
+      error: errorMessage
+    });
+  }
+});
+
+app.get('/api/status', (req, res) => {
+  try {
+    const status = getStatus();
+    res.json({
+      success: true,
+      status
+    });
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    logger.error(`Error getting status: ${errorMessage}`);
+    res.status(500).json({
+      success: false,
+      message: 'Error getting status',
+      error: errorMessage
+    });
+  }
+});
 
 // Error handling middleware
 app.use((err: Error, req: express.Request, res: express.Response, next: express.NextFunction) => {

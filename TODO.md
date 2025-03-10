@@ -34,6 +34,7 @@
 - [x] Implement input validation
 - [x] Add error handling middleware
 - [x] Create basic response formatting
+- [x] Add status endpoint to check system state
 
 ### 5. Testing
 
@@ -66,16 +67,22 @@
 - [x] Implement task checking mechanism
 - [x] Create scheduling system for periodic checks
 - [x] Implement Things3 URL scheme integration
+- [x] Implement polling for tasks with specific tag
+- [x] Add TV state checking and control based on task existence
 - [ ] Add support for custom tags and conditions
 
 ### 2. UI Dashboard
 
 - [ ] Design simple web UI for monitoring status
 - [ ] Implement configuration management via UI
-- [ ] Add status indicators for TV and task state
+- [x] Add status indicators for TV and task state
 
 ## Current Progress
 
 - [x] Created and tested mocks for LG TV responses
 - [x] Fixed timeout issues in tests
 - [x] All tests are now passing without warnings
+- [x] Implemented scheduler for periodic task checking
+- [x] Added TV state detection by attempting connection
+- [x] Implemented TV control based on task existence
+- [x] Added API endpoints for manual task checking and status retrieval

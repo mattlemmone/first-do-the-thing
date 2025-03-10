@@ -39,9 +39,8 @@ npm run dev
 
 ## API Endpoints
 
-- `POST /api/command` - Trigger a command
-  - Request body: `{ "protocol": "lgtv", "command": "turnOff", "config": { "ip": "192.168.1.X" } }`
-- `GET /api/check-things3` - Check Things 3 tasks and turn off TV if tasks with the specified tag exist
+- `POST /api/check-tasks` - Manually trigger a task check and TV control
+- `GET /api/status` - Get the current status of the system
 
 ## Configuration
 
@@ -69,7 +68,25 @@ The check is performed:
 
 1. On application startup
 2. At regular intervals (configurable via `THINGS3_CHECK_INTERVAL` in milliseconds)
-3. When manually triggered via the `/api/check-things3` endpoint
+3. When manually triggered via the `/api/check-tasks` endpoint
+
+### How It Works
+
+1. The system periodically checks Things 3 for tasks with the configured tag
+2. If any tasks are found, it attempts to connect to the LG TV
+3. If the TV is on and tasks exist, it sends a command to turn off the TV
+4. The system maintains a connection to the TV when it's on, which allows for faster control
+
+### Status Information
+
+You can get the current status of the system by calling the `/api/status` endpoint, which returns:
+
+- Whether the scheduler is running
+- The last time tasks were checked
+- The number of tasks found in the last check
+- Whether the TV is currently connected
+- The configured check interval
+- The tag being monitored
 
 ## License
 

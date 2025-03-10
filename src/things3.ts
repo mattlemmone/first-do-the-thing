@@ -69,28 +69,3 @@ export async function searchByTag(tag: string): Promise<Things3Task[]> {
     return matchingTodos;
   `);
 }
-
-/**
- * Open Things3 with a specific tag filter
- * @param tag - The tag to filter by
- * @returns Promise that resolves when the URL is opened
- */
-export async function openWithTagFilter(tag: string): Promise<void> {
-  const thingsUrl = `things:///show?id=today&filter=${encodeURIComponent(tag)}`;
-  logger.info(`Opening Things3 with URL: ${thingsUrl}`);
-  
-  const command = process.platform === 'darwin' 
-    ? `open "${thingsUrl}"` 
-    : process.platform === 'win32' 
-      ? `start "${thingsUrl}"` 
-      : `xdg-open "${thingsUrl}"`;
-
-  try {
-    await execAsync(command);
-    logger.info(`Things3 opened successfully with tag filter: ${tag}`);
-  } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-    logger.error(`Failed to open Things3: ${errorMessage}`);
-    throw new Error(`Failed to open Things3: ${errorMessage}`);
-  }
-} 
