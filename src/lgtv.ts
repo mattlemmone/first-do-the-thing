@@ -35,7 +35,7 @@ export function connect(config: LGTVConnectionConfig): Promise<LGTVConnection> {
     // Create connection with the client key and WebSocket options
     const connection = lgtv({
       url: `wss://${ip}:${port}`,
-      timeout: 10000,
+      timeout: 5000,
       reconnect: 0,
       clientKey: key,
       // Don't save the key to a file, we're using environment variables
@@ -83,7 +83,7 @@ export function connect(config: LGTVConnectionConfig): Promise<LGTVConnection> {
       logger.error('Connection timed out');
       connection.disconnect();
       reject(new Error('Connection timed out'));
-    }, 15000);
+    }, 5000); 
 
     // Clear the timeout when connected
     connection.on('connect', () => {

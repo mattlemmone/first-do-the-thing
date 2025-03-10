@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>First Do The Thing - Admin</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>First Do The Thing - Admin</h1>
+        </header>
+        
+        <main>
+            <section class="card" id="status-section">
+                <h2>System Status</h2>
+                <div id="status-content">
+                    <p>Loading status...</p>
+                </div>
+                <button id="refresh-status" class="btn">Refresh Status</button>
+            </section>
+            
+            <section class="card" id="tasks-section">
+                <h2>Outstanding Tasks</h2>
+                <div id="tasks-content">
+                    <p>Loading tasks...</p>
+                </div>
+                <button id="refresh-tasks" class="btn">Refresh Tasks</button>
+            </section>
+            
+            <section class="card" id="controls-section">
+                <h2>Manual Controls</h2>
+                <div class="controls">
+                    <button id="turn-off-tv-btn" class="btn danger" style="display: none;">Turn Off TV</button>
+                </div>
+            </section>
+            
+            <section class="card" id="logs-section">
+                <h2>System Logs</h2>
+                <div class="log-controls">
+                    <button id="refresh-logs" class="btn">Refresh Logs</button>
+                </div>
+                <div id="logs-container">
+                    <p>Loading logs...</p>
+                </div>
+            </section>
+        </main>
+        
+        <footer>
+            <p>&copy; 2024 First Do The Thing</p>
+        </footer>
+    </div>
+    
+    <script src="/js/admin.js"></script>
+</body>
+</html> 

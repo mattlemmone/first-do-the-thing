@@ -1,6 +1,7 @@
 import { startServer } from './api/server';
 import { validateConfig } from './config';
 import { startScheduler } from './scheduler';
+import { startTvMonitor } from './tvMonitor';
 import logger from './utils/logger';
 
 // Create logs directory if it doesn't exist
@@ -18,9 +19,10 @@ if (!validateConfig()) {
   process.exit(1);
 }
 
-// Start the server and scheduler
+// Start the server, TV monitor, and scheduler
 try {
   startServer();
+  startTvMonitor(); // Start TV monitor with default interval (10 seconds)
   startScheduler();
   
   logger.info('Application started successfully');

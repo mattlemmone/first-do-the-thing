@@ -1,35 +1,12 @@
 import { searchByTag } from './things3';
-import { connect, turnOff, LGTVConnection } from './lgtv';
+import { turnOff } from './lgtv';
 import { config } from './config';
 import logger from './utils/logger';
+import { getTvStatus, getTvConnection } from './tvMonitor';
 
-let tvConnection: LGTVConnection | null = null;
 let schedulerInterval: NodeJS.Timeout | null = null;
 let lastCheckTime: Date | null = null;
 let lastTaskCount: number = 0;
-
-/**
- * Check if the TV is on by attempting to connect to it
- * @returns Promise that resolves to true if the TV is on, false otherwise
- */
-async function isTvOn(): Promise<boolean> {
-  try {
-    // If we already have a connection, the TV is on
-    if (tvConnection) {
-      return true;
-    }
-    
-    // Try to connect to the TV
-    tvConnection = await connect(config.tv);
-    logger.info('Successfully connected to TV - TV is on');
-    return true;
-  } catch (error) {
-    // If we can't connect, the TV is likely off or unreachable
-    logger.info('Failed to connect to TV - TV is likely off or unreachable');
-    tvConnection = null;
-    return false;
-  }
-}
 
 /**
  * Check for tasks with the configured tag and turn off the TV if any exist
@@ -46,13 +23,15 @@ export async function checkTasksAndControlTv(): Promise<void> {
     if (tasks.length > 0) {
       logger.info(`Found ${tasks.length} tasks with tag ${config.things3.tag}`);
       
-      // Check if the TV is on
-      const tvIsOn = await isTvOn();
+      // Get TV status from the monitor
+      const { tvConnected } = getTvStatus();
       
-      if (tvIsOn && tvConnection) {
-        logger.info('TV is on and tasks exist - turning off TV');
-        await turnOff(tvConnection.connection);
-        tvConnection = null;
+      if (tvConnected) {
+        const tvConnection = getTvConnection();
+        if (tvConnection) {
+          logger.info('TV is on and tasks exist - turning off TV');
+          await turnOff(tvConnection.connection);
+        }
       } else {
         logger.info('TV is already off or unreachable');
       }
@@ -62,6 +41,8 @@ export async function checkTasksAndControlTv(): Promise<void> {
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     logger.error(`Error checking tasks and controlling TV: ${errorMessage}`);
+    const nextCheckInSeconds = Math.round(config.things3.checkInterval / 1000);
+    logger.info(`Will try again in ${nextCheckInSeconds} seconds`);
   }
 }
 
@@ -77,11 +58,14 @@ export function getStatus(): {
   checkInterval: number;
   monitoredTag: string;
 } {
+  // Get TV status from the monitor
+  const { tvConnected } = getTvStatus();
+  
   return {
     schedulerRunning: schedulerInterval !== null,
     lastCheckTime,
     lastTaskCount,
-    tvConnected: tvConnection !== null,
+    tvConnected,
     checkInterval: config.things3.checkInterval,
     monitoredTag: config.things3.tag
   };
@@ -116,12 +100,5 @@ export function stopScheduler(): void {
     clearInterval(schedulerInterval);
     schedulerInterval = null;
     logger.info('Scheduler stopped');
-  }
-  
-  // Disconnect from TV if connected
-  if (tvConnection) {
-    tvConnection.disconnect();
-    tvConnection = null;
-    logger.info('Disconnected from TV');
   }
 } 

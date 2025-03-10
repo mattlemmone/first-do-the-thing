@@ -9,6 +9,7 @@ interface TVConfig {
   ip: string;
   port: number;
   key: string;
+  statusCheckInterval: number;
 }
 
 interface Things3Config {
@@ -29,6 +30,7 @@ const config: AppConfig = {
     ip: process.env.TV_IP || '',
     port: parseInt(process.env.TV_PORT || '3001', 10),
     key: process.env.TV_KEY || '',
+    statusCheckInterval: parseInt(process.env.TV_STATUS_CHECK_INTERVAL || '10000', 10), // Default: 10 seconds
   },
   things3: {
     tag: process.env.THINGS3_TAG || 'do the thing',

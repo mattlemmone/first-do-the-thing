@@ -7,7 +7,7 @@
     "test": "tests"
   },
   "scripts": {
-    "build": "tsc",
+    "build": "tsc && node scripts/copy-static.js",
     "start": "node dist/index.js",
     "dev": "tsc -w & nodemon dist/index.js",
     "test": "jest",
