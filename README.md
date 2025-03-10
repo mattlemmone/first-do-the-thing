@@ -2,6 +2,11 @@
 
 A productivity enforcement system that automatically turns off your LG TV when you have incomplete tasks in Things 3. Perfect for those who need a little extra motivation to complete their to-do list before relaxing with TV time.
 
+![CleanShot 2025-03-10 at 12 39 49@2x](https://github.com/user-attachments/assets/6791bc67-9a14-453e-a649-d0f32b2aed57)
+
+![CleanShot 2025-03-10 at 12 40 17@2x](https://github.com/user-attachments/assets/85ce0dc5-f1c7-48b3-bb19-548e67edf904)
+
+
 ## How It Works
 
 1. The system periodically checks Things 3 for tasks with a specific tag (default: "do the thing")
