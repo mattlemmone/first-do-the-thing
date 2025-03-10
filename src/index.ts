@@ -1,0 +1,38 @@
+import { startServer } from './api/server';
+import { validateConfig } from './config';
+import logger from './utils/logger';
+import { CommandDispatcher } from './commands/CommandDispatcher';
+import { Scheduler } from './utils/scheduler';
+
+// Create logs directory if it doesn't exist
+import fs from 'fs';
+import path from 'path';
+
+const logsDir = path.join(__dirname, '..', 'logs');
+if (!fs.existsSync(logsDir)) {
+  fs.mkdirSync(logsDir, { recursive: true });
+}
+
+// Validate configuration before starting
+if (!validateConfig()) {
+  logger.error('Invalid configuration. Please check your .env file.');
+  process.exit(1);
+}
+
+// Start the server and scheduler
+try {
+  startServer();
+  
+  // Initialize command dispatcher and scheduler
+  const commandDispatcher = new CommandDispatcher();
+  const scheduler = new Scheduler(commandDispatcher);
+  
+  // Start the scheduler
+  scheduler.start();
+  
+  logger.info('Application started successfully');
+} catch (error) {
+  const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+  logger.error(`Failed to start application: ${errorMessage}`);
+  process.exit(1);
+} 
