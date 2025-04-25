@@ -14,8 +14,6 @@ A productivity enforcement system that automatically turns off your LG TV when y
 
 ## Prerequisites
 
-- Node.js (v14 or higher)
-- npm (v6 or higher)
 - An LG WebOS TV with network connectivity
 - Things 3 app (for task integration)
 - macOS (required for Things 3 integration)
@@ -115,11 +113,3 @@ http://localhost:3000
 - `POST /api/tv/turn-off` - Directly turn off the TV
 - `GET /api/tv/status` - Get the current TV connection status
 
-## Recent Updates
-
-### TV Connection Status Improvements
-
-- Fixed an issue where the system would incorrectly report the TV as connected when it was physically turned off
-- Added a heartbeat mechanism to verify the TV is actually responsive
-- Improved state management with immutable updates and event emitters
-- Enhanced error handling for more reliable TV control
