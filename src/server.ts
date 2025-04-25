@@ -1,12 +1,12 @@
 import express from "express";
 import path from "path";
 import fs from "fs";
-import logger from "../utils/logger";
-import { config } from "../config";
-import { checkTasksAndControlTv, getStatus } from "../scheduler";
-import { searchByTag } from "../things3";
-import { turnOff } from "../lgtv";
-import { getTvConnection, getTvStatus } from "../tvMonitor";
+import logger from "./features/logger";
+import { config } from "./config";
+import { checkTasksAndControlTv, getStatus } from "./services/scheduler";
+import { searchByTag } from "./features/things3";
+import { turnOff } from "./features/lgtv";
+import { getTvConnection, getTvStatus } from "./services/tvMonitor";
 
 const app = express();
 

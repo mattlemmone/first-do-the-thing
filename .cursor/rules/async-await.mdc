@@ -1,6 +1,0 @@
----
-description: async/await over promises
-globs: *.ts,*.js
-alwaysApply: false
----
-use async/await over promises

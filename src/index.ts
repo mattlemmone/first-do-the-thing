@@ -1,8 +1,8 @@
-import { startServer } from "./api/server";
+import { startServer } from "./server";
 import { validateConfig } from "./config";
-import { startScheduler } from "./scheduler";
-import { startTvMonitor } from "./tvMonitor";
-import logger from "./utils/logger";
+import { startScheduler } from "./services/scheduler";
+import { startTvMonitor } from "./services/tvMonitor";
+import logger from "./features/logger";
 
 // Create logs directory if it doesn't exist
 import fs from "fs";

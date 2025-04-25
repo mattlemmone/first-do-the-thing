@@ -1,8 +1,0 @@
----
-description: when creating new files
-globs: *.js, *.ts
-alwaysApply: false
----
-
-Always group files by feature.
-Tests should always be co-located with the source code they are testing.

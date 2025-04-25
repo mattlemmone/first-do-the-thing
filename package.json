@@ -12,9 +12,7 @@
     "dev": "tsc -w & nodemon dist/index.js",
     "test": "jest",
     "lint": "eslint . --ext .ts",
-    "format": "prettier --write \"src/**/*.ts\"",
-    "tv-control": "node tv-control.js",
-    "tv-on": "node tv-on.js"
+    "format": "prettier --write \"src/**/*.ts\""
   },
   "keywords": [],
   "author": "",

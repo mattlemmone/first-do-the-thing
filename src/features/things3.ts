@@ -3,9 +3,9 @@
  * Focused on retrieving tasks with specific tags
  */
 
-import { exec } from 'child_process';
-import { promisify } from 'util';
-import logger from './utils/logger';
+import { exec } from "child_process";
+import { promisify } from "util";
+import logger from "./logger";
 
 const execAsync = promisify(exec);
 
@@ -25,16 +25,22 @@ export interface Things3Task {
  */
 async function executeJxa(script: string): Promise<any> {
   try {
-    const { stdout } = await execAsync(`osascript -l JavaScript -e "JSON.stringify((function(){${script}})())"`, {
-      maxBuffer: 1024 * 1024 * 10, // 10MB buffer for large responses
-    });
-    
+    const { stdout } = await execAsync(
+      `osascript -l JavaScript -e "JSON.stringify((function(){${script}})())"`,
+      {
+        maxBuffer: 1024 * 1024 * 10, // 10MB buffer for large responses
+      }
+    );
+
     return JSON.parse(stdout);
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-    logger.error('Error executing JXA script:', errorMessage);
+    const errorMessage =
+      error instanceof Error ? error.message : "Unknown error";
+    logger.error("Error executing JXA script:", errorMessage);
     if (errorMessage.includes("Application can't be found")) {
-      throw new Error('Things 3 application not found. Make sure it is running.');
+      throw new Error(
+        "Things 3 application not found. Make sure it is running."
+      );
     }
     throw error;
   }

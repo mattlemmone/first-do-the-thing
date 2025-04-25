@@ -2,7 +2,7 @@
  * LG TV API - Implementation using lgtv2 package
  */
 
-import logger from "./utils/logger";
+import logger from "./logger";
 import lgtv from "lgtv2";
 
 export interface LGTVConnectionConfig {
@@ -12,9 +12,19 @@ export interface LGTVConnectionConfig {
 }
 
 export interface LGTVConnection {
-  connection: any;
+  connection: LGTVClient;
   disconnect: () => void;
   clientKey?: string;
+}
+
+// Type definitions for the lgtv2 library
+export interface LGTVClient {
+  request: (
+    uri: string,
+    callback: (err: Error | null, data?: unknown) => void
+  ) => void;
+  disconnect: () => void;
+  on: (event: string, callback: (...args: unknown[]) => void) => void;
 }
 
 /**
@@ -40,7 +50,7 @@ export async function connect(
     reconnect: 0,
     clientKey: key,
     // Don't save the key to a file, we're using environment variables
-    saveKey: (newKey: string) => {
+    saveKey: () => {
       logger.info("Received new client key from TV (hidden for security)");
       // We don't need to save it since we already have it in .env
     },
@@ -51,14 +61,15 @@ export async function connect(
         rejectUnauthorized: false,
       },
     },
-  });
+  }) as LGTVClient;
 
   // Create a promise that will resolve when connected or reject on error/timeout
   return await new Promise<LGTVConnection>((resolve, reject) => {
     // Handle connection events
-    connection.on("error", (err: Error) => {
-      logger.error(`LG TV connection error: ${err.message}`);
-      reject(err);
+    connection.on("error", (err: unknown) => {
+      const errorMessage = err instanceof Error ? err.message : String(err);
+      logger.error(`LG TV connection error: ${errorMessage}`);
+      reject(new Error(errorMessage));
     });
 
     connection.on("connecting", () => {
@@ -99,7 +110,7 @@ export async function connect(
  * Turn off the TV
  * @param connection The TV connection
  */
-export async function turnOff(connection: any): Promise<void> {
+export async function turnOff(connection: LGTVClient): Promise<void> {
   if (!connection) {
     throw new Error("Not connected to TV");
   }
@@ -117,5 +128,47 @@ export async function turnOff(connection: any): Promise<void> {
       logger.info("TV turned off successfully");
       resolve();
     });
+  });
+}
+
+/**
+ * Check if the TV is powered on by sending a ping request
+ * @param connection The TV connection
+ * @returns Promise that resolves to true if the TV is responsive, false otherwise
+ */
+export async function isConnected(connection: LGTVClient): Promise<boolean> {
+  if (!connection) {
+    return false;
+  }
+
+  logger.debug("Checking if TV is responsive");
+
+  return await new Promise<boolean>((resolve) => {
+    // Use a simple system info request as a ping
+    connection.request(
+      "ssap://system/getSystemInfo",
+      (err: Error | null, data?: unknown) => {
+        if (err) {
+          logger.debug(`TV is not responsive: ${err.message}`);
+          resolve(false);
+          return;
+        }
+
+        if (!data) {
+          logger.debug("TV returned empty response");
+          resolve(false);
+          return;
+        }
+
+        logger.debug("TV is responsive");
+        resolve(true);
+      }
+    );
+
+    // Set a short timeout for the ping request
+    setTimeout(() => {
+      logger.debug("TV ping request timed out");
+      resolve(false);
+    }, 2000);
   });
 }
